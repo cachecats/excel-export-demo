@@ -6,9 +6,13 @@
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.3",
     "@testing-library/user-event": "^13.5.0",
+    "antd": "^4.18.9",
+    "exceljs": "^4.3.0",
+    "file-saver": "^2.0.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
+    "typescript": "^4.6.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -34,5 +38,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/file-saver": "^2.0.5",
+    "sass": "^1.46.0",
+    "style-loader": "^1.3.0",
+    "typescript-plugin-css-modules": "^3.4.0"
   }
 }
