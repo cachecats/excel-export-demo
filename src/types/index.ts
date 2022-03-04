@@ -8,3 +8,21 @@ export interface ITableHeader {
   parentKey?: string;
   children?: ITableHeader[];
 }
+
+export interface StudentInfo {
+  id: number;
+  name: string;
+  age: number;
+  gender: string;
+  english?: number;
+  math?: number;
+  physics?: number;
+  comment?: string;
+}
+
+export interface IStyleAttr {
+  color?: string;
+  fontSize?: number;
+  horizontal?: 'fill' | 'distributed' | 'justify' | 'center' | 'left' | 'right' | 'centerContinuous' | undefined;
+  bold?: boolean;
+}
