@@ -5,6 +5,7 @@ import {ColumnsType} from "antd/lib/table/interface";
 import * as ExcelJs from 'exceljs';
 import {generateHeaders, saveWorkbook} from "../utils";
 import {StudentInfo} from "../types";
+import {downloadExcel, downloadFiles2Zip} from "../utils/excelUtils";
 
 interface SimpleDemoProps {
 }
@@ -125,12 +126,45 @@ const SimpleDemo: React.FC<SimpleDemoProps> = () => {
     saveWorkbook(workbook, 'simple-demo.xlsx');
   }
 
+  function onExportZip() {
+    downloadFiles2Zip({
+      zipName: '压缩包',
+      files: [
+        {
+          filename: 'test',
+          sheets: [{
+            sheetName: 'test',
+            columns: columns,
+            dataSource: list
+          }]
+        },
+        {
+          filename: 'test2',
+          sheets: [{
+            sheetName: 'test',
+            columns: columns,
+            dataSource: list
+          }]
+        },
+        {
+          filename: 'test3',
+          sheets: [{
+            sheetName: 'test',
+            columns: columns,
+            dataSource: list
+          }]
+        }
+      ]
+    })
+  }
+
   return (
     <Card>
       <h3>简单表格</h3>
       <Space style={{marginBottom: 10}}>
         <Button type={'primary'} onClick={onExportBasicExcel}>导出excel</Button>
         <Button type={'primary'} onClick={onExportBasicExcelWithStyle}>导出带样式excel</Button>
+        <Button type={'primary'} onClick={onExportZip}>导出zip</Button>
       </Space>
       <Table
         columns={columns}
