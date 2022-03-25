@@ -1,8 +1,8 @@
-import { ColumnType } from 'antd/es/table/interface';
+import {ColumnType} from 'antd/es/table/interface';
 // @ts-ignore
-import { saveAs } from 'file-saver';
+import {saveAs} from 'file-saver';
 import * as ExcelJs from 'exceljs';
-import { Workbook, Worksheet, Row } from 'exceljs';
+import {Workbook, Worksheet, Row} from 'exceljs';
 import JsZip from 'jszip'
 
 export interface IDownloadFiles2Zip {
@@ -63,7 +63,7 @@ export const DEFAULT_ROW_HEIGHT = 20;
  * @param params
  */
 export function downloadExcel(params: IDownloadExcel) {
-  console.log({ params });
+  console.log({params});
   // 创建工作簿
   const workbook = new ExcelJs.Workbook();
   params?.sheets?.forEach((sheet) => handleEachSheet(workbook, sheet));
@@ -73,27 +73,30 @@ export function downloadExcel(params: IDownloadExcel) {
 /**
  * 导出多个文件为zip压缩包
  */
- export async function downloadFiles2Zip(params: IDownloadFiles2Zip) {
+export async function downloadFiles2Zip(params: IDownloadFiles2Zip) {
   const zip = new JsZip();
   // 待每个文件都写入完之后再生成 zip 文件
   const promises = params?.files?.map(async param => await handleEachFile(param, zip, ''))
   await Promise.all(promises);
-  zip.generateAsync({type:"blob"}).then(blob => {
+  zip.generateAsync({type: "blob"}).then(blob => {
     saveAs(blob, `${params.zipName}.zip`)
   })
 }
 
 export async function downloadFiles2ZipWithFolder(params: IDownloadFiles2ZipWithFolder) {
   const zip = new JsZip();
-  const outPromises = params?.folders?.map(async folder => {
-    console.log({folder})
-    const promises = folder?.files?.map(async param => await handleEachFile(param, zip, folder.folderName));
-    await Promise.all(promises);
-  })
+  const outPromises = params?.folders?.map(async folder => await handleFolder(zip, folder))
   await Promise.all(outPromises);
-  zip.generateAsync({type:"blob"}).then(blob => {
+  zip.generateAsync({type: "blob"}).then(blob => {
     saveAs(blob, `${params.zipName}.zip`)
   })
+}
+
+async function handleFolder(zip: JsZip, folder: IFolder) {
+  console.log({folder})
+  let folderPromises: Promise<any>[] = [];
+  const promises = folder?.files?.map(async param => await handleEachFile(param, zip, folder.folderName));
+  await Promise.all([...promises, ...folderPromises]);
 }
 
 async function handleEachFile(param: IDownloadExcel, zip: JsZip, folderName: string) {
@@ -102,15 +105,13 @@ async function handleEachFile(param: IDownloadExcel, zip: JsZip, folderName: str
   param?.sheets?.forEach((sheet) => handleEachSheet(workbook, sheet));
   // 生成 blob
   const data = await workbook.xlsx.writeBuffer();
-  const blob = new Blob([data], { type: '' });
-  if(folderName) {
-    // 写入一个子文件夹并在子文件夹中写入文件
+  const blob = new Blob([data], {type: ''});
+  if (folderName) {
     zip.folder(folderName)?.file(`${param.filename}.xlsx`, blob)
   } else {
     // 写入 zip 中一个文件
     zip.file(`${param.filename}.xlsx`, blob);
   }
-
 }
 
 function handleEachSheet(workbook: Workbook, sheet: ISheet) {
@@ -135,7 +136,7 @@ export function handleHeader(worksheet: Worksheet) {
     cell.fill = {
       type: 'pattern',
       pattern: 'solid',
-      fgColor: { argb: 'dff8ff' },
+      fgColor: {argb: 'dff8ff'},
     };
     // 设置字体
     // eslint-disable-next-line no-param-reassign
@@ -148,7 +149,7 @@ export function handleHeader(worksheet: Worksheet) {
     };
     // 设置对齐方式
     // eslint-disable-next-line no-param-reassign
-    cell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: false };
+    cell.alignment = {vertical: 'middle', horizontal: 'left', wrapText: false};
   });
 }
 
@@ -176,7 +177,7 @@ export function handleData(worksheet: Worksheet, sheet: ISheet) {
 export function saveWorkbook(workbook: Workbook, fileName: string) {
   // 导出文件
   workbook.xlsx.writeBuffer().then((data: any) => {
-    const blob = new Blob([data], { type: '' });
+    const blob = new Blob([data], {type: ''});
     saveAs(blob, fileName);
   });
 }
@@ -210,7 +211,7 @@ export function getColumnNumber(width: number) {
 }
 
 export function addHeaderStyle(row: Row, attr?: IStyleAttr) {
-  const { color, fontSize, horizontal, bold } = attr || {};
+  const {color, fontSize, horizontal, bold} = attr || {};
   // eslint-disable-next-line no-param-reassign
   row.height = DEFAULT_ROW_HEIGHT;
   row.eachCell((cell) => {
@@ -218,7 +219,7 @@ export function addHeaderStyle(row: Row, attr?: IStyleAttr) {
     cell.fill = {
       type: 'pattern',
       pattern: 'solid',
-      fgColor: { argb: color },
+      fgColor: {argb: color},
     };
     // eslint-disable-next-line no-param-reassign
     cell.font = {
@@ -227,7 +228,7 @@ export function addHeaderStyle(row: Row, attr?: IStyleAttr) {
       name: '微软雅黑',
     };
     // eslint-disable-next-line no-param-reassign
-    cell.alignment = { vertical: 'middle', wrapText: false, horizontal: horizontal ?? 'left' };
+    cell.alignment = {vertical: 'middle', wrapText: false, horizontal: horizontal ?? 'left'};
   });
 }
 
@@ -271,7 +272,7 @@ export function mergeColumnCell(
       );
       // eslint-disable-next-line no-param-reassign
       const cell = rowHeader1.getCell(index + 1);
-      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.alignment = {vertical: 'middle', horizontal: 'center'};
     }
   });
 }
@@ -281,7 +282,7 @@ export function mergeRowCell(headers: ITableHeader[], row: Row, worksheet: Works
   // 当前列的索引
   let colIndex = 1;
   headers.forEach((header) => {
-    const { width, children } = header;
+    const {width, children} = header;
     if (children) {
       children.forEach(() => {
         colIndex += 1;

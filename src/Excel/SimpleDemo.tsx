@@ -205,6 +205,48 @@ const SimpleDemo: React.FC<SimpleDemoProps> = () => {
           ]
         },
         {
+          folderName: '文件夹2/文件夹2-1',
+          files: [
+            {
+              filename: 'test',
+              sheets: [{
+                sheetName: 'test',
+                columns: columns,
+                dataSource: list
+              }]
+            },
+            {
+              filename: 'test2',
+              sheets: [{
+                sheetName: 'test',
+                columns: columns,
+                dataSource: list
+              }]
+            },
+          ]
+        },
+        {
+          folderName: '文件夹2/文件夹2-1/文件夹2-1-1',
+          files: [
+            {
+              filename: 'test',
+              sheets: [{
+                sheetName: 'test',
+                columns: columns,
+                dataSource: list
+              }]
+            },
+            {
+              filename: 'test2',
+              sheets: [{
+                sheetName: 'test',
+                columns: columns,
+                dataSource: list
+              }]
+            },
+          ]
+        },
+        {
           folderName: '',
           files: [
             {
