@@ -11,6 +11,16 @@ export interface IDownloadFiles2Zip {
   files: IDownloadExcel[];
 }
 
+export interface IDownloadFiles2ZipWithFolder {
+  zipName: string;
+  folders: IFolder[];
+}
+
+export interface IFolder {
+  folderName: string;
+  files: IDownloadExcel[];
+}
+
 export interface IDownloadExcel {
   filename: string;
   sheets: ISheet[];
@@ -66,22 +76,41 @@ export function downloadExcel(params: IDownloadExcel) {
  export async function downloadFiles2Zip(params: IDownloadFiles2Zip) {
   const zip = new JsZip();
   // 待每个文件都写入完之后再生成 zip 文件
-  const promises = params?.files?.map(async param => await handleEachFile(param, zip))
+  const promises = params?.files?.map(async param => await handleEachFile(param, zip, ''))
   await Promise.all(promises);
   zip.generateAsync({type:"blob"}).then(blob => {
     saveAs(blob, `${params.zipName}.zip`)
   })
 }
 
-async function handleEachFile(param: IDownloadExcel, zip: JsZip) {
+export async function downloadFiles2ZipWithFolder(params: IDownloadFiles2ZipWithFolder) {
+  const zip = new JsZip();
+  const outPromises = params?.folders?.map(async folder => {
+    console.log({folder})
+    const promises = folder?.files?.map(async param => await handleEachFile(param, zip, folder.folderName));
+    await Promise.all(promises);
+  })
+  await Promise.all(outPromises);
+  zip.generateAsync({type:"blob"}).then(blob => {
+    saveAs(blob, `${params.zipName}.zip`)
+  })
+}
+
+async function handleEachFile(param: IDownloadExcel, zip: JsZip, folderName: string) {
   // 创建工作簿
   const workbook = new ExcelJs.Workbook();
   param?.sheets?.forEach((sheet) => handleEachSheet(workbook, sheet));
   // 生成 blob
   const data = await workbook.xlsx.writeBuffer();
   const blob = new Blob([data], { type: '' });
-  // 写入 zip 中一个文件
-  zip.file(`${param.filename}.xlsx`, blob);
+  if(folderName) {
+    // 写入一个子文件夹并在子文件夹中写入文件
+    zip.folder(folderName)?.file(`${param.filename}.xlsx`, blob)
+  } else {
+    // 写入 zip 中一个文件
+    zip.file(`${param.filename}.xlsx`, blob);
+  }
+
 }
 
 function handleEachSheet(workbook: Workbook, sheet: ISheet) {

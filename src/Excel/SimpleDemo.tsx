@@ -5,7 +5,7 @@ import {ColumnsType} from "antd/lib/table/interface";
 import * as ExcelJs from 'exceljs';
 import {generateHeaders, saveWorkbook} from "../utils";
 import {StudentInfo} from "../types";
-import {downloadExcel, downloadFiles2Zip} from "../utils/excelUtils";
+import {downloadExcel, downloadFiles2Zip, downloadFiles2ZipWithFolder} from "../utils/excelUtils";
 
 interface SimpleDemoProps {
 }
@@ -158,6 +158,77 @@ const SimpleDemo: React.FC<SimpleDemoProps> = () => {
     })
   }
 
+  function onExportFolderZip() {
+    downloadFiles2ZipWithFolder({
+      zipName: '压缩包',
+      folders: [
+        {
+          folderName: '文件夹1',
+          files: [
+            {
+              filename: 'test',
+              sheets: [{
+                sheetName: 'test',
+                columns: columns,
+                dataSource: list
+              }]
+            },
+            {
+              filename: 'test2',
+              sheets: [{
+                sheetName: 'test',
+                columns: columns,
+                dataSource: list
+              }]
+            },
+          ]
+        },
+        {
+          folderName: '文件夹2',
+          files: [
+            {
+              filename: 'test',
+              sheets: [{
+                sheetName: 'test',
+                columns: columns,
+                dataSource: list
+              }]
+            },
+            {
+              filename: 'test2',
+              sheets: [{
+                sheetName: 'test',
+                columns: columns,
+                dataSource: list
+              }]
+            },
+          ]
+        },
+        {
+          folderName: '',
+          files: [
+            {
+              filename: 'test',
+              sheets: [{
+                sheetName: 'test',
+                columns: columns,
+                dataSource: list
+              }]
+            },
+            {
+              filename: 'test2',
+              sheets: [{
+                sheetName: 'test',
+                columns: columns,
+                dataSource: list
+              }]
+            },
+          ]
+        }
+      ]
+    })
+  }
+
   return (
     <Card>
       <h3>简单表格</h3>
@@ -165,6 +236,7 @@ const SimpleDemo: React.FC<SimpleDemoProps> = () => {
         <Button type={'primary'} onClick={onExportBasicExcel}>导出excel</Button>
         <Button type={'primary'} onClick={onExportBasicExcelWithStyle}>导出带样式excel</Button>
         <Button type={'primary'} onClick={onExportZip}>导出zip</Button>
+        <Button type={'primary'} onClick={onExportFolderZip}>导出分文件夹zip</Button>
       </Space>
       <Table
         columns={columns}
