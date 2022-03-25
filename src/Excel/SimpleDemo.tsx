@@ -255,7 +255,13 @@ const SimpleDemo: React.FC<SimpleDemoProps> = () => {
                 sheetName: 'test',
                 columns: columns,
                 dataSource: list
-              }]
+              },
+                {
+                  sheetName: 'test2',
+                  columns: columns,
+                  dataSource: list
+                }
+              ]
             },
             {
               filename: 'test2',

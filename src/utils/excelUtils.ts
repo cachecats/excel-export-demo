@@ -83,6 +83,10 @@ export async function downloadFiles2Zip(params: IDownloadFiles2Zip) {
   })
 }
 
+/**
+ * 导出支持多级文件夹的压缩包
+ * @param params
+ */
 export async function downloadFiles2ZipWithFolder(params: IDownloadFiles2ZipWithFolder) {
   const zip = new JsZip();
   const outPromises = params?.folders?.map(async folder => await handleFolder(zip, folder))
@@ -206,7 +210,7 @@ export function generateHeaders(columns: any[]) {
 }
 
 export function getColumnNumber(width: number) {
-  // 需要的列数，四舍五入
+  // 需要的列数，向上取整
   return Math.ceil(width / DEFAULT_COLUMN_WIDTH);
 }
 
@@ -288,7 +292,7 @@ export function mergeRowCell(headers: ITableHeader[], row: Row, worksheet: Works
         colIndex += 1;
       });
     } else {
-      // 需要的列数，四舍五入
+      // 需要的列数，向上取整
       const colNum = getColumnNumber(width);
       // 如果 colNum > 1 说明需要合并
       if (colNum > 1) {
