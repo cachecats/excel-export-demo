@@ -2,7 +2,7 @@ import {ColumnType} from 'antd/es/table/interface';
 // @ts-ignore
 import {saveAs} from 'file-saver';
 import * as ExcelJs from 'exceljs';
-import {Workbook, Worksheet, Row} from 'exceljs';
+import {Workbook, Worksheet, Row, Cell} from 'exceljs';
 import JsZip from 'jszip'
 
 export interface IDownloadFiles2Zip {
@@ -135,91 +135,44 @@ export function handleHeader(worksheet: Worksheet) {
   const headerRow = worksheet.getRow(1);
   headerRow.height = 22;
   // 通过 cell 设置样式，更精准
-  headerRow.eachCell((cell) => {
-    // 设置背景色
-    // eslint-disable-next-line no-param-reassign
-    cell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: {argb: 'dff8ff'},
-    };
-    // 设置字体
-    // eslint-disable-next-line no-param-reassign
-    cell.font = {
-      bold: true,
-      italic: false,
-      size: 12,
-      name: '微软雅黑',
-      // color: { argb: 'ff0000' },
-    };
-    // 设置对齐方式
-    // eslint-disable-next-line no-param-reassign
-    cell.alignment = {vertical: 'middle', horizontal: 'left', wrapText: false};
-  });
+  headerRow.eachCell((cell) => addCellStyle(cell, {color: 'dff8ff', fontSize: 12, horizontal: 'left'}));
 }
 
 export function handleData(worksheet: Worksheet, sheet: ISheet) {
   // 添加行
   const rows = worksheet.addRows(sheet?.dataSource);
   // 设置每行的样式
-  rows?.forEach((row) => {
-    // 设置字体
-    // eslint-disable-next-line no-param-reassign
-    row.font = {
-      size: 11,
-      name: '微软雅黑',
-    };
-    // 设置对齐方式
-    // eslint-disable-next-line no-param-reassign
-    row.alignment = {
-      vertical: 'middle',
-      horizontal: 'left',
-      wrapText: true,
-    };
-  });
+  addStyleToData(rows);
 }
 
+/**
+ * 如果 column 有 render 函数，则以 render 渲染的结果显示
+ * @param worksheet
+ * @param sheet
+ */
 function handleDataWithRender(worksheet: Worksheet, sheet: ISheet) {
   const {dataSource, columns} = sheet;
   const rowsData = dataSource?.map(data => {
-    const rowData = columns?.map(column => {
-      // console.log('render args', data[column.dataIndex], data)
+    return columns?.map(column => {
       // @ts-ignore
       const renderResult = column?.render?.(data[column.dataIndex], data);
-      // console.log('render', renderResult)
       if (renderResult) {
-        // 如果是 string 说明没包裹标签，直接返回
-        // console.log('typeof result', typeof renderResult)
+        // 如果不是 object 说明没包裹标签，是基本类型直接返回
         if (typeof renderResult !== "object") {
           return renderResult;
         }
-        // 如果不是 string 说明包裹了标签，逐级取出值
+        // 如果是 object 说明包裹了标签，逐级取出值
         return getValueFromRender(renderResult);
       }
       // @ts-ignore
       return data[column.dataIndex];
     })
-    return rowData;
   })
-  // console.log('rowsData', rowsData);
+  console.log({rowsData})
   // 添加行
   const rows = worksheet.addRows(rowsData);
   // 设置每行的样式
-  rows?.forEach((row) => {
-    // 设置字体
-    // eslint-disable-next-line no-param-reassign
-    row.font = {
-      size: 11,
-      name: '微软雅黑',
-    };
-    // 设置对齐方式
-    // eslint-disable-next-line no-param-reassign
-    row.alignment = {
-      vertical: 'middle',
-      horizontal: 'left',
-      wrapText: true,
-    };
-  });
+  addStyleToData(rows);
 }
 
 // 递归取出 render 里的值
@@ -234,6 +187,25 @@ function getValueFromRender(renderResult: any) {
     }
   }
   return ''
+}
+
+function addStyleToData(rows: Row[]) {
+  // 设置每行的样式
+  rows?.forEach((row) => {
+    // 设置字体
+    // eslint-disable-next-line no-param-reassign
+    row.font = {
+      size: 11,
+      name: '微软雅黑',
+    };
+    // 设置对齐方式
+    // eslint-disable-next-line no-param-reassign
+    row.alignment = {
+      vertical: 'middle',
+      horizontal: 'left',
+      wrapText: true,
+    };
+  });
 }
 
 export function saveWorkbook(workbook: Workbook, fileName: string) {
@@ -272,26 +244,28 @@ export function getColumnNumber(width: number) {
   return Math.ceil(width / DEFAULT_COLUMN_WIDTH);
 }
 
-export function addHeaderStyle(row: Row, attr?: IStyleAttr) {
+export function addCellStyle(cell: Cell,  attr?: IStyleAttr) {
   const {color, fontSize, horizontal, bold} = attr || {};
   // eslint-disable-next-line no-param-reassign
+  cell.fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: {argb: color},
+  };
+  // eslint-disable-next-line no-param-reassign
+  cell.font = {
+    bold: bold ?? true,
+    size: fontSize ?? 11,
+    name: '微软雅黑',
+  };
+  // eslint-disable-next-line no-param-reassign
+  cell.alignment = {vertical: 'middle', wrapText: true, horizontal: horizontal ?? 'left'};
+}
+
+export function addHeaderStyle(row: Row, attr?: IStyleAttr) {
+  // eslint-disable-next-line no-param-reassign
   row.height = DEFAULT_ROW_HEIGHT;
-  row.eachCell((cell) => {
-    // eslint-disable-next-line no-param-reassign
-    cell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: {argb: color},
-    };
-    // eslint-disable-next-line no-param-reassign
-    cell.font = {
-      bold: bold ?? true,
-      size: fontSize ?? 11,
-      name: '微软雅黑',
-    };
-    // eslint-disable-next-line no-param-reassign
-    cell.alignment = {vertical: 'middle', wrapText: false, horizontal: horizontal ?? 'left'};
-  });
+  row.eachCell((cell) => addCellStyle(cell, attr));
 }
 
 // 合并行和列，用于处理表头合并

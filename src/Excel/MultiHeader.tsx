@@ -188,7 +188,7 @@ const MultiHeader: React.FC<MultiHeaderProps> = () => {
         <Button type={'primary'} onClick={onExportMultiHeaderExcel}>导出excel</Button>
       </Space>
       <Table
-        key={'id'}
+        rowKey={'id'}
         columns={columns}
         dataSource={list}
       />

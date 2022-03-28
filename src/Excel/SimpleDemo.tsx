@@ -24,7 +24,7 @@ const SimpleDemo: React.FC<SimpleDemoProps> = () => {
       arr.push({
         id: i,
         name: i % 2 === 0 ? `小明${i}号哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈啊哈嘿嘿哈哈或` : `小明${i}号`,
-        age: i,
+        age: 10 + i,
         gender: i % 2 === 0 ? '男' : '女'
       })
     }
@@ -37,8 +37,8 @@ const SimpleDemo: React.FC<SimpleDemoProps> = () => {
       dataIndex: 'id',
       key: 'id',
       title: 'ID',
-      // render: (text, row) => <div>{String(text) === '0' ? '-' : text}</div>,
-      render: (text, row) => String(text) === '0' ? '-' : text,
+      render: (text, row) => <div><p>{row.id + 20}</p></div>,
+      // render: (text, row) => String(text) === '0' ? '-' : text,
       // render: (text, row) => <div>{'hahaha'}</div>,
       // render: (text, row) => 'hahaha',
     },
@@ -310,6 +310,7 @@ const SimpleDemo: React.FC<SimpleDemoProps> = () => {
         <Button type={'primary'} onClick={onExportFolderZip}>导出分文件夹zip</Button>
       </Space>
       <Table
+        rowKey='id'
         columns={columns}
         dataSource={list}
       />
