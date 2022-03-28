@@ -37,9 +37,10 @@ const SimpleDemo: React.FC<SimpleDemoProps> = () => {
       dataIndex: 'id',
       key: 'id',
       title: 'ID',
-      // render: (text, row) => <div><p>{'hahaha'}</p></div>,
+      // render: (text, row) => <div>{String(text) === '0' ? '-' : text}</div>,
+      render: (text, row) => String(text) === '0' ? '-' : text,
       // render: (text, row) => <div>{'hahaha'}</div>,
-      render: (text, row) => 'hahaha',
+      // render: (text, row) => 'hahaha',
     },
     {
       width: 100,

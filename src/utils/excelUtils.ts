@@ -173,7 +173,7 @@ export function handleData(worksheet: Worksheet, sheet: ISheet) {
     // eslint-disable-next-line no-param-reassign
     row.alignment = {
       vertical: 'middle',
-      // horizontal: 'left',
+      horizontal: 'left',
       wrapText: true,
     };
   });
@@ -183,12 +183,14 @@ function handleDataWithRender(worksheet: Worksheet, sheet: ISheet) {
   const {dataSource, columns} = sheet;
   const rowsData = dataSource?.map(data => {
     const rowData = columns?.map(column => {
+      // console.log('render args', data[column.dataIndex], data)
       // @ts-ignore
-      const renderResult = column?.render?.();
-      console.log('render', renderResult)
+      const renderResult = column?.render?.(data[column.dataIndex], data);
+      // console.log('render', renderResult)
       if (renderResult) {
         // 如果是 string 说明没包裹标签，直接返回
-        if (typeof renderResult === "string") {
+        // console.log('typeof result', typeof renderResult)
+        if (typeof renderResult !== "object") {
           return renderResult;
         }
         // 如果不是 string 说明包裹了标签，逐级取出值
@@ -199,7 +201,7 @@ function handleDataWithRender(worksheet: Worksheet, sheet: ISheet) {
     })
     return rowData;
   })
-  console.log('rowsData', rowsData);
+  // console.log('rowsData', rowsData);
   // 添加行
   const rows = worksheet.addRows(rowsData);
   // 设置每行的样式
@@ -214,7 +216,7 @@ function handleDataWithRender(worksheet: Worksheet, sheet: ISheet) {
     // eslint-disable-next-line no-param-reassign
     row.alignment = {
       vertical: 'middle',
-      // horizontal: 'left',
+      horizontal: 'left',
       wrapText: true,
     };
   });
