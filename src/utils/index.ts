@@ -63,7 +63,7 @@ export function addHeaderStyle(row: Row, attr?: IStyleAttr) {
       name: '微软雅黑',
     };
     // eslint-disable-next-line no-param-reassign
-    cell.alignment = { vertical: 'middle', wrapText: false, horizontal: horizontal ?? 'left' };
+    cell.alignment = { vertical: 'middle', wrapText: true, horizontal: horizontal ?? 'left' };
   });
 }
 
@@ -108,7 +108,7 @@ export function mergeColumnCell(
       );
       // eslint-disable-next-line no-param-reassign
       const cell = rowHeader1.getCell(index + 1);
-      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
     }
   });
 }

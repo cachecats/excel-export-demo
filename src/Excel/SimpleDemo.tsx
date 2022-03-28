@@ -23,7 +23,7 @@ const SimpleDemo: React.FC<SimpleDemoProps> = () => {
     for (let i = 0; i < 5; i++) {
       arr.push({
         id: i,
-        name: `小明${i}号`,
+        name: i % 2 === 0 ? `小明${i}号哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈啊哈嘿嘿哈哈或` : `小明${i}号`,
         age: i,
         gender: i % 2 === 0 ? '男' : '女'
       })
@@ -37,6 +37,9 @@ const SimpleDemo: React.FC<SimpleDemoProps> = () => {
       dataIndex: 'id',
       key: 'id',
       title: 'ID',
+      // render: (text, row) => <div><p>{'hahaha'}</p></div>,
+      // render: (text, row) => <div>{'hahaha'}</div>,
+      render: (text, row) => 'hahaha',
     },
     {
       width: 100,
@@ -126,17 +129,35 @@ const SimpleDemo: React.FC<SimpleDemoProps> = () => {
     saveWorkbook(workbook, 'simple-demo.xlsx');
   }
 
+  function onExportExcel() {
+    downloadExcel({
+      filename: 'test',
+      sheets: [{
+        sheetName: 'test',
+        columns: columns,
+        dataSource: list
+      }]
+    })
+  }
+
   function onExportZip() {
     downloadFiles2Zip({
       zipName: '压缩包',
       files: [
         {
           filename: 'test',
-          sheets: [{
-            sheetName: 'test',
-            columns: columns,
-            dataSource: list
-          }]
+          sheets: [
+            {
+              sheetName: 'test',
+              columns: columns,
+              dataSource: list
+            },
+            {
+              sheetName: 'test2',
+              columns: columns,
+              dataSource: list
+            }
+          ]
         },
         {
           filename: 'test2',
@@ -283,6 +304,7 @@ const SimpleDemo: React.FC<SimpleDemoProps> = () => {
       <Space style={{marginBottom: 10}}>
         <Button type={'primary'} onClick={onExportBasicExcel}>导出excel</Button>
         <Button type={'primary'} onClick={onExportBasicExcelWithStyle}>导出带样式excel</Button>
+        <Button type={'primary'} onClick={onExportExcel}>封装方法导出excel</Button>
         <Button type={'primary'} onClick={onExportZip}>导出zip</Button>
         <Button type={'primary'} onClick={onExportFolderZip}>导出分文件夹zip</Button>
       </Space>

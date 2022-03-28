@@ -126,7 +126,8 @@ function handleEachSheet(workbook: Workbook, sheet: ISheet) {
   // 设置列
   worksheet.columns = generateHeaders(sheet.columns);
   handleHeader(worksheet);
-  handleData(worksheet, sheet);
+  // handleData(worksheet, sheet);
+  handleDataWithRender(worksheet, sheet);
 }
 
 export function handleHeader(worksheet: Worksheet) {
@@ -176,6 +177,61 @@ export function handleData(worksheet: Worksheet, sheet: ISheet) {
       wrapText: true,
     };
   });
+}
+
+function handleDataWithRender(worksheet: Worksheet, sheet: ISheet) {
+  const {dataSource, columns} = sheet;
+  const rowsData = dataSource?.map(data => {
+    const rowData = columns?.map(column => {
+      // @ts-ignore
+      const renderResult = column?.render?.();
+      console.log('render', renderResult)
+      if (renderResult) {
+        // 如果是 string 说明没包裹标签，直接返回
+        if (typeof renderResult === "string") {
+          return renderResult;
+        }
+        // 如果不是 string 说明包裹了标签，逐级取出值
+        return getValueFromRender(renderResult);
+      }
+      // @ts-ignore
+      return data[column.dataIndex];
+    })
+    return rowData;
+  })
+  console.log('rowsData', rowsData);
+  // 添加行
+  const rows = worksheet.addRows(rowsData);
+  // 设置每行的样式
+  rows?.forEach((row) => {
+    // 设置字体
+    // eslint-disable-next-line no-param-reassign
+    row.font = {
+      size: 11,
+      name: '微软雅黑',
+    };
+    // 设置对齐方式
+    // eslint-disable-next-line no-param-reassign
+    row.alignment = {
+      vertical: 'middle',
+      // horizontal: 'left',
+      wrapText: true,
+    };
+  });
+}
+
+// 递归取出 render 里的值
+// @ts-ignore
+function getValueFromRender(renderResult: any) {
+  if (renderResult?.type) {
+    let children = renderResult?.props?.children;
+    if (children?.type) {
+      return getValueFromRender(children);
+    } else {
+      return children;
+    }
+  }
+  return ''
 }
 
 export function saveWorkbook(workbook: Workbook, fileName: string) {

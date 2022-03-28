@@ -95,7 +95,7 @@ const MultiHeader: React.FC<MultiHeaderProps> = () => {
         english: 80 + i,
         math: 60 + i,
         physics: 70 + i,
-        comment: `小明${i}号同学表现非常好，热心助人，成绩优秀，是社会主义接班人`
+        comment: `小明${i}号同学表现非常好，热心助人，成绩优秀，是社会主义接班人。热心助人，成绩优秀，是社会主义接班人。热心助人，成绩优秀，是社会主义接班人`
       })
     }
     setList(arr);
@@ -174,9 +174,9 @@ const MultiHeader: React.FC<MultiHeaderProps> = () => {
       const rowData = headerKeys?.map(key => item[key]);
       const row = worksheet.addRow(rowData);
       mergeRowCell(headers, row, worksheet);
-      row.height = DEFAULT_ROW_HEIGHT;
+      row.height = 26;
       // 设置行样式, wrapText: 自动换行
-      row.alignment = { vertical: 'middle', wrapText: false, shrinkToFit: false };
+      row.alignment = { vertical: 'middle', wrapText: true, shrinkToFit: false };
       row.font = { size: 11, name: '微软雅黑' };
     })
   }
